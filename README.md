@@ -34,7 +34,7 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
    add_header X-Content-Type-Options "nosniff" always;
    add_header Referrer-Policy "same-origin" always;
    add_header X-Frame-Options "DENY" always;
-   add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" always;
+   add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self' blob:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" always;
    add_header Permissions-Policy "vibrate=(self), interest-cohort=()" always;
 
    location = /sw.js {
@@ -55,7 +55,7 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
    Header always set X-Content-Type-Options "nosniff"
    Header always set Referrer-Policy "same-origin"
    Header always set X-Frame-Options "DENY"
-   Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+   Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self' blob:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
    Header always set Permissions-Policy "vibrate=(self), interest-cohort=()"
 
    <Files "sw.js">
@@ -68,7 +68,15 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
    - Tap the share button → **Add to Home Screen**.
    - Launch the app from the home screen — it starts fullscreen, without the Safari chrome.
 
-4. **When you make changes**: the URL changes, so you need to re-add the icon to the home screen. Remove the old icon, open the new URL in Safari, and add it again. This is by design: stateless, no server state.
+4. **On Android / desktop Chrome / Edge**:
+   - Open the URL in the browser. After it loads, Chrome shows an install icon
+     in the address bar (or a "Install app" entry in the menu).
+   - Install — the app captures the current URL (with your events) as its
+     launch URL.
+
+5. **When you make changes**: the URL changes, so you need to re-install /
+   re-add the icon to the home screen. Remove the old icon, open the new URL,
+   and add/install it again. This is by design: stateless, no server state.
 
 ## Updating / deploying a new version
 

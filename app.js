@@ -386,12 +386,59 @@
   function save() {
     encodeData(events);
     render();
+    updateManifestLink();
     showToast('URL is gewijzigd — sla opnieuw op je beginscherm op');
+  }
+
+  // ---------- Dynamic manifest (non-iOS only) ----------
+
+  // iOS Safari drops query strings when launching from a PWA with start_url,
+  // so we only inject a manifest on other platforms. On those platforms the
+  // manifest captures the current URL (including ?d=…) as start_url, so the
+  // installed app launches with the events frozen at install time.
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  let manifestBlobUrl = null;
+  function updateManifestLink() {
+    if (isIOS) return;
+    const manifest = {
+      name: 'Dagen tot...',
+      short_name: 'Dagen tot',
+      start_url: location.href,
+      scope: './',
+      display: 'standalone',
+      background_color: '#121212',
+      theme_color: '#121212',
+      lang: 'nl',
+      icons: [
+        { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+      ],
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    if (manifestBlobUrl) URL.revokeObjectURL(manifestBlobUrl);
+    manifestBlobUrl = URL.createObjectURL(blob);
+    let link = document.querySelector('link[rel="manifest"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'manifest';
+      document.head.appendChild(link);
+    }
+    link.href = manifestBlobUrl;
   }
 
   // ---------- Init ----------
 
+  // Migrate legacy hash-based URLs to query string so the manifest start_url
+  // and Safari "Add to Home Screen" both capture the data.
+  if (events.length > 0 && location.hash.startsWith('#d=') && !location.search) {
+    encodeData(events);
+  }
+
   render();
+  updateManifestLink();
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
