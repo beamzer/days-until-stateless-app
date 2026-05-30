@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dagen tot...</title>
+<meta name="theme-color" content="#1a1a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dagen tot">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="events"></main>
+
+<button id="add-btn" type="button" aria-label="Nieuwe gebeurtenis toevoegen">+</button>
+
+<div id="empty" hidden>
+  <p>Druk op <strong>+</strong> om je eerste gebeurtenis toe te voegen.</p>
+</div>
+
+<div id="modal" hidden aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <form class="modal-sheet" id="edit-form">
+    <h2 id="modal-title">Nieuwe gebeurtenis</h2>
+
+    <label>
+      <span>Titel</span>
+      <input type="text" name="title" required maxlength="60" autocomplete="off">
+    </label>
+
+    <fieldset class="type-group">
+      <legend>Type</legend>
+      <label><input type="radio" name="type" value="1" checked> Jaarlijks</label>
+      <label><input type="radio" name="type" value="0"> Vaste datum</label>
+    </fieldset>
+
+    <label>
+      <span>Datum</span>
+      <input type="date" name="date" required>
+    </label>
+
+    <fieldset class="color-group">
+      <legend>Kleur</legend>
+      <div class="color-grid" id="color-grid"></div>
+    </fieldset>
+
+    <div class="modal-actions">
+      <button type="button" id="delete-btn" hidden>Wissen</button>
+      <span class="spacer"></span>
+      <button type="button" id="cancel-btn">Annuleren</button>
+      <button type="submit">Opslaan</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
