@@ -16,13 +16,18 @@
   // ---------- URL hash <-> events ----------
 
   function b64urlEncode(s) {
-    return btoa(unescape(encodeURIComponent(s)))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const bytes = new TextEncoder().encode(s);
+    let bin = '';
+    for (const b of bytes) bin += String.fromCharCode(b);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
   function b64urlDecode(s) {
     s = s.replace(/-/g, '+').replace(/_/g, '/');
     while (s.length % 4) s += '=';
-    return decodeURIComponent(escape(atob(s)));
+    const bin = atob(s);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
   }
 
   const MAX_PAYLOAD = 50000;
