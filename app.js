@@ -372,6 +372,45 @@
 
   document.getElementById('add-btn').addEventListener('click', () => openEditModal(null));
 
+  // ---------- Info overlay + language switch ----------
+
+  const infoOverlay = document.getElementById('info-overlay');
+  const infoBtn = document.getElementById('info-btn');
+  const infoCloseBtn = document.getElementById('info-close-btn');
+
+  function getInitialLang() {
+    const stored = (() => { try { return localStorage.getItem('lang'); } catch { return null; } })();
+    if (stored === 'nl' || stored === 'en') return stored;
+    return (navigator.language || '').toLowerCase().startsWith('nl') ? 'nl' : 'en';
+  }
+
+  function applyLang(lang) {
+    try { localStorage.setItem('lang', lang); } catch {}
+    infoOverlay.querySelectorAll('.info-content').forEach(el => {
+      el.hidden = el.dataset.lang !== lang;
+    });
+    infoOverlay.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+  }
+
+  function openInfo() {
+    applyLang(getInitialLang());
+    infoOverlay.hidden = false;
+    infoOverlay.setAttribute('aria-hidden', 'false');
+  }
+  function closeInfo() {
+    infoOverlay.hidden = true;
+    infoOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  infoBtn.addEventListener('click', openInfo);
+  infoCloseBtn.addEventListener('click', closeInfo);
+  infoOverlay.querySelector('[data-close-info]').addEventListener('click', closeInfo);
+  infoOverlay.querySelectorAll('.lang-btn').forEach(b => {
+    b.addEventListener('click', () => applyLang(b.dataset.lang));
+  });
+
   // ---------- Save + toast ----------
 
   const toast = document.getElementById('toast');

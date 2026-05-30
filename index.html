@@ -18,6 +18,7 @@
 <main id="events"></main>
 
 <button id="add-btn" type="button" aria-label="Nieuwe gebeurtenis toevoegen">+</button>
+<button id="info-btn" type="button" aria-label="Help">?</button>
 
 <div id="empty" hidden>
   <p>Druk op <strong>+</strong> om je eerste gebeurtenis toe te voegen.</p>
@@ -56,6 +57,83 @@
       <button type="submit">Opslaan</button>
     </div>
   </form>
+</div>
+
+<div id="info-overlay" hidden aria-hidden="true">
+  <div class="modal-backdrop" data-close-info></div>
+  <div class="info-sheet">
+    <div class="info-header">
+      <div class="lang-switch">
+        <button type="button" class="lang-btn" data-lang="nl" aria-label="Nederlands"><span class="flag">🇳🇱</span> NL</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-label="English"><span class="flag">🇬🇧</span> EN</button>
+      </div>
+      <button type="button" class="info-close" id="info-close-btn" aria-label="Close">×</button>
+    </div>
+
+    <div class="info-content" data-lang="nl" hidden>
+      <h2>Dagen tot...</h2>
+      <p>Een eenvoudige app die laat zien hoeveel dagen er nog zijn tot belangrijke gebeurtenissen, zoals verjaardagen of een pensioendatum.</p>
+
+      <h3>Hoe werkt het?</h3>
+      <ul>
+        <li>Alle gegevens worden opgeslagen in de URL. De server slaat niets op en je hoeft niet in te loggen.</li>
+        <li>Tik op de <strong>+</strong>-knop rechtsonder om een nieuwe gebeurtenis toe te voegen.</li>
+        <li>Houd een blokje lang ingedrukt om het te bewerken of te wissen.</li>
+        <li>Sleep aan het <strong>≡</strong>-handvat om gebeurtenissen te herrangschikken.</li>
+        <li>Bij elke wijziging verandert de URL automatisch.</li>
+      </ul>
+
+      <h3>Toevoegen aan beginscherm</h3>
+      <p><strong>Op iPhone (Safari):</strong></p>
+      <ol>
+        <li>Open de URL in Safari.</li>
+        <li>Tik op de deelknop onderaan.</li>
+        <li>Kies <em>Zet op beginscherm</em>.</li>
+        <li>De app start fullscreen met je gebeurtenissen.</li>
+      </ol>
+      <p><strong>Op Android (Chrome) of desktop:</strong></p>
+      <ol>
+        <li>Open de URL in Chrome of Edge.</li>
+        <li>Klik op het install-icoon in de adresbalk, of kies <em>App installeren</em> in het menu.</li>
+        <li>De app wordt geïnstalleerd met je huidige gebeurtenissen.</li>
+      </ol>
+
+      <h3>Na wijzigingen</h3>
+      <p>Omdat de gegevens in de URL zitten, verandert de URL bij elke wijziging. Verwijder dan het oude icoon en installeer opnieuw via dezelfde stappen.</p>
+    </div>
+
+    <div class="info-content" data-lang="en" hidden>
+      <h2>Days Until...</h2>
+      <p>A simple app that shows how many days until important events, like birthdays or your retirement date.</p>
+
+      <h3>How does it work?</h3>
+      <ul>
+        <li>All data is stored in the URL. The server stores nothing and you don't need to log in.</li>
+        <li>Tap the <strong>+</strong> button at the bottom right to add a new event.</li>
+        <li>Long-press a block to edit or delete it.</li>
+        <li>Drag the <strong>≡</strong> handle to reorder events.</li>
+        <li>Every change updates the URL automatically.</li>
+      </ul>
+
+      <h3>Add to home screen</h3>
+      <p><strong>On iPhone (Safari):</strong></p>
+      <ol>
+        <li>Open the URL in Safari.</li>
+        <li>Tap the share button at the bottom.</li>
+        <li>Choose <em>Add to Home Screen</em>.</li>
+        <li>The app launches fullscreen with your events.</li>
+      </ol>
+      <p><strong>On Android (Chrome) or desktop:</strong></p>
+      <ol>
+        <li>Open the URL in Chrome or Edge.</li>
+        <li>Click the install icon in the address bar, or choose <em>Install app</em> in the menu.</li>
+        <li>The app is installed with your current events.</li>
+      </ol>
+
+      <h3>After changes</h3>
+      <p>Because the data lives in the URL, the URL changes with every edit. Remove the old icon and reinstall using the same steps.</p>
+    </div>
+  </div>
 </div>
 
 <div id="toast" hidden></div>
