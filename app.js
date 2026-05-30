@@ -5,10 +5,71 @@
     `hsl(${Math.round(i * 22.5)}, 65%, 72%)`
   );
 
-  const MONTHS_NL = [
-    'januari', 'februari', 'maart', 'april', 'mei', 'juni',
-    'juli', 'augustus', 'september', 'oktober', 'november', 'december'
-  ];
+  const I18N = {
+    nl: {
+      appTitle: 'Dagen tot...',
+      appTitleShort: 'Dagen tot',
+      addAria: 'Nieuwe gebeurtenis toevoegen',
+      helpAria: 'Help',
+      closeAria: 'Sluiten',
+      empty: 'Druk op + om je eerste gebeurtenis toe te voegen.',
+      newEvent: 'Nieuwe gebeurtenis',
+      editEvent: 'Bewerken',
+      title: 'Titel',
+      typeLegend: 'Type',
+      typeYearly: 'Jaarlijks',
+      typeFixed: 'Vaste datum',
+      date: 'Datum',
+      colorLegend: 'Kleur',
+      delete: 'Wissen',
+      cancel: 'Annuleren',
+      save: 'Opslaan',
+      deleteConfirm: 'Deze gebeurtenis wissen?',
+      today: 'vandaag',
+      dayOne: 'dag',
+      dayMany: 'dagen',
+      dayOneAgo: 'dag geleden',
+      dayManyAgo: 'dagen geleden',
+      dragAria: 'Sleep om te verplaatsen',
+      colorAria: (n) => `Kleur ${n}`,
+      saveToast: 'URL is gewijzigd — sla opnieuw op je beginscherm op',
+      months: ['januari', 'februari', 'maart', 'april', 'mei', 'juni',
+               'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
+    },
+    en: {
+      appTitle: 'Days Until...',
+      appTitleShort: 'Days Until',
+      addAria: 'Add new event',
+      helpAria: 'Help',
+      closeAria: 'Close',
+      empty: 'Tap + to add your first event.',
+      newEvent: 'New event',
+      editEvent: 'Edit',
+      title: 'Title',
+      typeLegend: 'Type',
+      typeYearly: 'Yearly',
+      typeFixed: 'Fixed date',
+      date: 'Date',
+      colorLegend: 'Color',
+      delete: 'Delete',
+      cancel: 'Cancel',
+      save: 'Save',
+      deleteConfirm: 'Delete this event?',
+      today: 'today',
+      dayOne: 'day',
+      dayMany: 'days',
+      dayOneAgo: 'day ago',
+      dayManyAgo: 'days ago',
+      dragAria: 'Drag to reorder',
+      colorAria: (n) => `Color ${n}`,
+      saveToast: 'URL changed — re-save it to your home screen',
+      months: ['January', 'February', 'March', 'April', 'May', 'June',
+               'July', 'August', 'September', 'October', 'November', 'December'],
+    },
+  };
+
+  let currentLang = 'nl';
+  function t(key) { return I18N[currentLang][key]; }
 
   const LONG_PRESS_MS = 500;
   const MOVE_TOLERANCE = 8;
@@ -84,7 +145,7 @@
   }
 
   function formatDate(ev, target) {
-    const m = MONTHS_NL[target.getMonth()];
+    const m = t('months')[target.getMonth()];
     const d = target.getDate();
     return ev.r === 1
       ? `${d} ${m}`
@@ -102,13 +163,13 @@
   function setDaysText(daysEl, days) {
     daysEl.textContent = '';
     if (days === 0) {
-      daysEl.textContent = 'vandaag';
+      daysEl.textContent = t('today');
       return;
     }
     const n = Math.abs(days);
     const label = days > 0
-      ? (days === 1 ? 'dag' : 'dagen')
-      : (days === -1 ? 'dag geleden' : 'dagen geleden');
+      ? (days === 1 ? t('dayOne') : t('dayMany'))
+      : (days === -1 ? t('dayOneAgo') : t('dayManyAgo'));
     daysEl.textContent = String(n);
     const span = document.createElement('span');
     span.className = 'label';
@@ -133,6 +194,7 @@
 
       el.querySelector('.title').textContent = ev.t;
       el.querySelector('.date').textContent = dateStr;
+      el.querySelector('.handle').setAttribute('aria-label', t('dragAria'));
       setDaysText(el.querySelector('.days'), days);
 
       attachLongPress(el, idx);
@@ -273,13 +335,13 @@
   const cancelBtn = document.getElementById('cancel-btn');
   const colorGrid = document.getElementById('color-grid');
 
-  // Build color swatches once.
+  // Build color swatches once. Aria-labels are localized by applyLang().
   PALETTE.forEach((c, i) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.style.background = c;
     b.dataset.color = i;
-    b.setAttribute('aria-label', `Kleur ${i + 1}`);
+    b.dataset.swatchIdx = i + 1;
     b.addEventListener('click', () => {
       colorGrid.querySelectorAll('button').forEach(x => x.classList.remove('selected'));
       b.classList.add('selected');
@@ -296,7 +358,7 @@
       ? { t: '', r: 1, d: '', c: Math.floor(Math.random() * 16) }
       : events[idx];
 
-    modalTitle.textContent = isNew ? 'Nieuwe gebeurtenis' : 'Bewerken';
+    modalTitle.textContent = isNew ? t('newEvent') : t('editEvent');
     deleteBtn.hidden = isNew;
 
     form.title.value = ev.t;
@@ -364,7 +426,7 @@
 
   deleteBtn.addEventListener('click', () => {
     if (editingIdx === null) return;
-    if (!confirm('Deze gebeurtenis wissen?')) return;
+    if (!confirm(t('deleteConfirm'))) return;
     events.splice(editingIdx, 1);
     closeModal();
     save();
@@ -372,11 +434,12 @@
 
   document.getElementById('add-btn').addEventListener('click', () => openEditModal(null));
 
-  // ---------- Info overlay + language switch ----------
+  // ---------- Info overlay + language ----------
 
   const infoOverlay = document.getElementById('info-overlay');
   const infoBtn = document.getElementById('info-btn');
   const infoCloseBtn = document.getElementById('info-close-btn');
+  const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
 
   function getInitialLang() {
     const stored = (() => { try { return localStorage.getItem('lang'); } catch { return null; } })();
@@ -385,17 +448,38 @@
   }
 
   function applyLang(lang) {
+    currentLang = lang;
     try { localStorage.setItem('lang', lang); } catch {}
+
+    document.documentElement.lang = lang;
+    document.title = t('appTitle');
+    if (appleTitleMeta) appleTitleMeta.setAttribute('content', t('appTitleShort'));
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      el.setAttribute('aria-label', t(el.dataset.i18nAria));
+    });
+
+    // Color swatch aria-labels (built dynamically).
+    colorGrid.querySelectorAll('button').forEach((b) => {
+      b.setAttribute('aria-label', t('colorAria')(Number(b.dataset.swatchIdx)));
+    });
+
+    // Help overlay: show only the matching language block + highlight flag.
     infoOverlay.querySelectorAll('.info-content').forEach(el => {
       el.hidden = el.dataset.lang !== lang;
     });
     infoOverlay.querySelectorAll('.lang-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.lang === lang);
     });
+
+    // Re-render events so date strings and day labels reflect the new language.
+    render();
   }
 
   function openInfo() {
-    applyLang(getInitialLang());
     infoOverlay.hidden = false;
     infoOverlay.setAttribute('aria-hidden', 'false');
   }
@@ -426,7 +510,7 @@
     encodeData(events);
     render();
     updateManifestLink();
-    showToast('URL is gewijzigd — sla opnieuw op je beginscherm op');
+    showToast(t('saveToast'));
   }
 
   // ---------- Dynamic manifest (non-iOS only) ----------
@@ -476,7 +560,7 @@
     encodeData(events);
   }
 
-  render();
+  applyLang(getInitialLang());
   updateManifestLink();
 
   if ('serviceWorker' in navigator) {
