@@ -2,6 +2,10 @@
 
 Static web app that shows how many days until your events. All data lives in the URL query string (`?d=…`) — no backend, no login.
 
+<p align="center">
+  <img src="screenshot.jpeg" alt="App on iPhone showing three event blocks (holiday, birthday, retirement) with day countdowns" width="320">
+</p>
+
 > **Why query string and not `#`?** iOS Safari strips the hash fragment when using "Add to Home Screen" and in fullscreen PWA mode. Query strings are preserved. The trade-off: `?d=<base64>` ends up in your web server access logs (with the hash it does not).
 
 ## Run locally
