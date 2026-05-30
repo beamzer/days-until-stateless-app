@@ -19,7 +19,10 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
 
 ## Deploy on a Linux web server
 
-1. **Upload** the whole folder (`index.html`, `app.js`, `style.css`, `manifest.json`, `sw.js`, `icons/`) to the web root of a virtual host served over **HTTPS**. Service workers only run on HTTPS (or localhost).
+1. **Upload** the whole folder to the web root of a virtual host served over **HTTPS**. Service workers only run on HTTPS (or localhost). Make sure these files end up in the web root next to `index.html`:
+   - `app.js`, `style.css`, `sw.js`, `manifest.json`
+   - `icons/` (the full subdirectory)
+   - `apple-touch-icon.png`, `apple-touch-icon-precomposed.png`, `favicon.ico` (root-level copies that iOS Safari probes by convention — without these you get the "first letter of the title" fallback icon on home screen)
 
 2. **MIME types** — make sure your web server serves these correctly:
    - `manifest.json` → `application/manifest+json`

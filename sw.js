@@ -1,10 +1,13 @@
-const VERSION = 'v9';
+const VERSION = 'v10';
 const CACHE = `days-until-${VERSION}`;
 const ASSETS = [
   './',
   './index.html',
   './app.js',
   './style.css',
+  './favicon.ico',
+  './apple-touch-icon.png',
+  './apple-touch-icon-precomposed.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon-180.png',
