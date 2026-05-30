@@ -1,27 +1,27 @@
-# Dagen tot...
+# Days Until...
 
-Statische webapp die laat zien hoeveel dagen tot je gebeurtenissen. Alle data zit in de URL-querystring (`?d=…`) — geen backend, geen login.
+Static web app that shows how many days until your events. All data lives in the URL query string (`?d=…`) — no backend, no login.
 
-> **Waarom querystring en niet `#`?** iOS Safari knipt het hash-fragment weg bij "Zet op beginscherm" en in fullscreen-PWA-mode. Querystring blijft wél behouden. De keerzijde: `?d=<base64>` komt in je webserver-access-logs terecht (bij hash niet).
+> **Why query string and not `#`?** iOS Safari strips the hash fragment when using "Add to Home Screen" and in fullscreen PWA mode. Query strings are preserved. The trade-off: `?d=<base64>` ends up in your web server access logs (with the hash it does not).
 
-## Lokaal proberen
+## Run locally
 
 ```sh
 cd days_until
 python3 -m http.server 8000
 ```
 
-Open <http://localhost:8000>. Klik op `+` om een gebeurtenis toe te voegen. Sleep aan het ≡-handvat om te herrangschikken. Houd een blokje lang ingedrukt om te bewerken of wissen.
+Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to reorder. Long-press a block to edit or delete it.
 
-## Deploy op Linux webserver
+## Deploy on a Linux web server
 
-1. **Upload** de hele map (`index.html`, `app.js`, `style.css`, `manifest.json`, `sw.js`, `icons/`) naar de webroot van een virtual host die met **HTTPS** wordt geserveerd. Service workers werken alleen op HTTPS (of localhost).
+1. **Upload** the whole folder (`index.html`, `app.js`, `style.css`, `manifest.json`, `sw.js`, `icons/`) to the web root of a virtual host served over **HTTPS**. Service workers only run on HTTPS (or localhost).
 
-2. **MIME types** — zorg dat je webserver deze correct serveert:
+2. **MIME types** — make sure your web server serves these correctly:
    - `manifest.json` → `application/manifest+json`
    - `sw.js` → `application/javascript`
 
-   ### nginx voorbeeld
+   ### nginx example
 
    ```nginx
    types {
@@ -37,7 +37,7 @@ Open <http://localhost:8000>. Klik op `+` om een gebeurtenis toe te voegen. Slee
    }
    ```
 
-   ### Apache voorbeeld (`.htaccess`)
+   ### Apache example (`.htaccess`)
 
    ```apache
    AddType application/manifest+json .json
@@ -46,27 +46,27 @@ Open <http://localhost:8000>. Klik op `+` om een gebeurtenis toe te voegen. Slee
    </Files>
    ```
 
-3. **Op je iPhone**:
-   - Open Safari op de URL.
-   - Tik op de delen-knop → **Zet op beginscherm**.
-   - Open de app vanaf het beginscherm — start fullscreen, zonder Safari-balkjes.
+3. **On your iPhone**:
+   - Open the URL in Safari.
+   - Tap the share button → **Add to Home Screen**.
+   - Launch the app from the home screen — it starts fullscreen, without the Safari chrome.
 
-4. **Bij wijzigingen**: omdat de URL verandert moet je het icoon opnieuw op het beginscherm zetten. Verwijder het oude icoon, open de nieuwe URL in Safari, en voeg opnieuw toe. Dit is bewust zo: stateless, geen server-state.
+4. **When you make changes**: the URL changes, so you need to re-add the icon to the home screen. Remove the old icon, open the new URL in Safari, and add it again. This is by design: stateless, no server state.
 
-## Update / nieuwe versie deployen
+## Updating / deploying a new version
 
-De service worker cachet alle assets. Bij elke wijziging aan `app.js`/`style.css`/`index.html`:
+The service worker caches all assets. Whenever you change `app.js`/`style.css`/`index.html`:
 
-1. Verhoog `VERSION` in `sw.js` (bijv. `v1` → `v2`).
-2. Upload alle gewijzigde bestanden.
-3. De nieuwe SW activeert bij volgende bezoek en verwijdert oude cache.
+1. Bump `VERSION` in `sw.js` (e.g. `v1` → `v2`).
+2. Upload all changed files.
+3. The new SW activates on the next visit and clears the old cache.
 
-## Bestanden
+## Files
 
-| Bestand | Doel |
+| File | Purpose |
 |---|---|
-| `index.html` | Markup + iOS PWA meta-tags |
-| `app.js` | Alle logica (URL-codering, render, modal, drag) |
+| `index.html` | Markup + iOS PWA meta tags |
+| `app.js` | All logic (URL encoding, render, modal, drag) |
 | `style.css` | Mobile-first responsive styling |
 | `manifest.json` | PWA manifest |
 | `sw.js` | Service worker (cache-first) |
