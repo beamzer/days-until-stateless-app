@@ -29,6 +29,14 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
        application/javascript        js;
    }
 
+   # Security headers (defense in depth — CSP is also set as meta tag in index.html)
+   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+   add_header X-Content-Type-Options "nosniff" always;
+   add_header Referrer-Policy "same-origin" always;
+   add_header X-Frame-Options "DENY" always;
+   add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'" always;
+   add_header Permissions-Policy "vibrate=(self), interest-cohort=()" always;
+
    location = /sw.js {
        add_header Cache-Control "no-cache";
    }
@@ -41,6 +49,15 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
 
    ```apache
    AddType application/manifest+json .json
+
+   # Security headers (defense in depth)
+   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+   Header always set X-Content-Type-Options "nosniff"
+   Header always set Referrer-Policy "same-origin"
+   Header always set X-Frame-Options "DENY"
+   Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+   Header always set Permissions-Policy "vibrate=(self), interest-cohort=()"
+
    <Files "sw.js">
      Header set Cache-Control "no-cache"
    </Files>

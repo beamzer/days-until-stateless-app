@@ -25,22 +25,26 @@
     return decodeURIComponent(escape(atob(s)));
   }
 
+  const MAX_PAYLOAD = 50000;
+  const MAX_EVENTS = 200;
+  const MAX_TITLE = 200;
+
   function decodeData() {
     // Prefer query string (?d=...); fall back to legacy hash (#d=...) for migration.
     let payload = new URLSearchParams(location.search).get('d');
     if (!payload && location.hash.startsWith('#d=')) {
       payload = location.hash.slice(3);
     }
-    if (!payload) return [];
+    if (!payload || payload.length > MAX_PAYLOAD) return [];
     try {
       const arr = JSON.parse(b64urlDecode(payload));
       if (!Array.isArray(arr)) return [];
       return arr.filter(e =>
-        e && typeof e.t === 'string'
+        e && typeof e.t === 'string' && e.t.length > 0 && e.t.length <= MAX_TITLE
         && (e.r === 0 || e.r === 1)
-        && typeof e.d === 'string'
+        && typeof e.d === 'string' && e.d.length <= 10
         && Number.isInteger(e.c) && e.c >= 0 && e.c < 16
-      );
+      ).slice(0, MAX_EVENTS);
     } catch {
       return [];
     }
@@ -86,11 +90,29 @@
 
   const elEvents = document.getElementById('events');
   const elEmpty = document.getElementById('empty');
+  const eventTpl = document.getElementById('event-tpl');
 
   let events = decodeData();
 
+  function setDaysText(daysEl, days) {
+    daysEl.textContent = '';
+    if (days === 0) {
+      daysEl.textContent = 'vandaag';
+      return;
+    }
+    const n = Math.abs(days);
+    const label = days > 0
+      ? (days === 1 ? 'dag' : 'dagen')
+      : (days === -1 ? 'dag geleden' : 'dagen geleden');
+    daysEl.textContent = String(n);
+    const span = document.createElement('span');
+    span.className = 'label';
+    span.textContent = label;
+    daysEl.appendChild(span);
+  }
+
   function render() {
-    elEvents.innerHTML = '';
+    elEvents.textContent = '';
     elEmpty.hidden = events.length > 0;
 
     const today = todayLocal();
@@ -99,30 +121,14 @@
       const days = daysBetween(today, target);
       const dateStr = formatDate(ev, target);
 
-      const el = document.createElement('div');
-      el.className = 'event';
+      const el = eventTpl.content.firstElementChild.cloneNode(true);
       el.dataset.idx = idx;
       el.style.setProperty('--ev-color', PALETTE[ev.c]);
       if (days < 0) el.classList.add('past');
 
-      const daysLabel = days === 0
-        ? '<div class="days">vandaag</div>'
-        : days > 0
-          ? `<div class="days">${days}<span class="label">${days === 1 ? 'dag' : 'dagen'}</span></div>`
-          : `<div class="days">${-days}<span class="label">${-days === 1 ? 'dag geleden' : 'dagen geleden'}</span></div>`;
-
-      el.innerHTML = `
-        <div class="info">
-          <div class="title"></div>
-          ${daysLabel}
-          <div class="date"></div>
-        </div>
-        <div class="handle" aria-label="Sleep om te verplaatsen">
-          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>
-        </div>
-      `;
       el.querySelector('.title').textContent = ev.t;
       el.querySelector('.date').textContent = dateStr;
+      setDaysText(el.querySelector('.days'), days);
 
       attachLongPress(el, idx);
       attachDrag(el, idx);

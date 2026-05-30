@@ -1,4 +1,4 @@
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `days-until-${VERSION}`;
 const ASSETS = [
   './',
@@ -27,15 +27,19 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
+  const isNav = e.request.mode === 'navigate';
   e.respondWith(
-    caches.match(e.request).then((cached) =>
-      cached || fetch(e.request).then((res) => {
-        if (res.ok && e.request.method === 'GET') {
+    caches.match(e.request, { ignoreSearch: isNav }).then((cached) => {
+      if (cached) return cached;
+      return fetch(e.request).then((res) => {
+        // Don't cache navigation responses — each ?d=... is a unique URL but
+        // serves identical HTML; caching them all would bloat storage.
+        if (!isNav && res.ok && e.request.method === 'GET') {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, copy));
         }
         return res;
-      }).catch(() => cached)
-    )
+      }).catch(() => cached);
+    })
   );
 });
