@@ -32,7 +32,8 @@
       dayManyAgo: 'dagen geleden',
       dragAria: 'Sleep om te verplaatsen',
       colorAria: (n) => `Kleur ${n}`,
-      saveToast: 'URL is gewijzigd — sla opnieuw op je beginscherm op',
+      toastTitle: 'URL gewijzigd',
+      toastHint: 'Open de link hierboven in je browser en sla daar opnieuw op als app op je beginscherm.',
       months: ['januari', 'februari', 'maart', 'april', 'mei', 'juni',
                'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
     },
@@ -62,7 +63,8 @@
       dayManyAgo: 'days ago',
       dragAria: 'Drag to reorder',
       colorAria: (n) => `Color ${n}`,
-      saveToast: 'URL changed — re-save it to your home screen',
+      toastTitle: 'URL changed',
+      toastHint: 'Open the link above in your browser, then re-save it to your home screen.',
       months: ['January', 'February', 'March', 'April', 'May', 'June',
                'July', 'August', 'September', 'October', 'November', 'December'],
     },
@@ -498,19 +500,24 @@
   // ---------- Save + toast ----------
 
   const toast = document.getElementById('toast');
-  let toastTimer = null;
-  function showToast(msg) {
-    toast.textContent = msg;
+  const toastLink = document.getElementById('toast-link');
+  const toastCloseBtn = document.getElementById('toast-close');
+
+  function showToast() {
+    toastLink.href = location.href;
+    toastLink.textContent = location.href;
     toast.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast.hidden = true; }, 3500);
   }
+  function closeToast() {
+    toast.hidden = true;
+  }
+  toastCloseBtn.addEventListener('click', closeToast);
 
   function save() {
     encodeData(events);
     render();
     updateManifestLink();
-    showToast(t('saveToast'));
+    showToast();
   }
 
   // ---------- Dynamic manifest (non-iOS only) ----------

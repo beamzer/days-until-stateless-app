@@ -138,7 +138,14 @@
   </div>
 </div>
 
-<div id="toast" hidden></div>
+<div id="toast" hidden role="status" aria-live="polite">
+  <div class="toast-row">
+    <span class="toast-title" data-i18n="toastTitle">URL gewijzigd</span>
+    <button type="button" id="toast-close" class="toast-close" data-i18n-aria="closeAria" aria-label="Sluiten">×</button>
+  </div>
+  <a id="toast-link" class="toast-link" target="_blank" rel="noopener noreferrer" href="#"></a>
+  <div class="toast-hint" data-i18n="toastHint">Open in browser om opnieuw aan je beginscherm toe te voegen</div>
+</div>
 
 <template id="event-tpl"><div class="event"><div class="info"><div class="title"></div><div class="days"></div><div class="date"></div></div><div class="handle" data-i18n-aria="dragAria" aria-label="Sleep om te verplaatsen"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></div></div></template>
 
