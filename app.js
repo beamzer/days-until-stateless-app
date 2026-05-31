@@ -7,8 +7,8 @@
 
   const I18N = {
     nl: {
-      appTitle: 'Dagen tot...',
-      appTitleShort: 'Dagen tot',
+      appTitle: 'DagenTot',
+      appTitleShort: 'DagenTot',
       addAria: 'Nieuwe gebeurtenis toevoegen',
       helpAria: 'Help',
       closeAria: 'Sluiten',
@@ -38,8 +38,8 @@
                'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
     },
     en: {
-      appTitle: 'Days Until...',
-      appTitleShort: 'Days Until',
+      appTitle: 'DagenTot',
+      appTitleShort: 'DagenTot',
       addAria: 'Add new event',
       helpAria: 'Help',
       closeAria: 'Close',
@@ -446,7 +446,7 @@
   function getInitialLang() {
     const stored = (() => { try { return localStorage.getItem('lang'); } catch { return null; } })();
     if (stored === 'nl' || stored === 'en') return stored;
-    return (navigator.language || '').toLowerCase().startsWith('nl') ? 'nl' : 'en';
+    return 'nl';
   }
 
   function applyLang(lang) {
@@ -534,14 +534,14 @@
   function updateManifestLink() {
     if (isIOS) return;
     const manifest = {
-      name: 'Dagen tot...',
-      short_name: 'Dagen tot',
+      name: t('appTitle'),
+      short_name: t('appTitleShort'),
       start_url: location.href,
       scope: './',
       display: 'standalone',
       background_color: '#121212',
       theme_color: '#121212',
-      lang: 'nl',
+      lang: currentLang,
       icons: [
         { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
         { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

@@ -1,6 +1,6 @@
 {
-  "name": "Dagen tot...",
-  "short_name": "Dagen tot",
+  "name": "DagenTot",
+  "short_name": "DagenTot",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
