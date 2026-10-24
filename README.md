@@ -57,7 +57,14 @@ Open <http://localhost:8000>. Click `+` to add an event. Drag the ≡ handle to 
    ```apache
    AddType application/manifest+json .json
 
+   # Don't serve repo-only files (or just don't upload them)
+   <FilesMatch "^(README\.md|LICENSE|screenshot\.jpeg)$">
+     Require all denied
+   </FilesMatch>
+
    # Security headers (defense in depth)
+   # "set" replaces any value added elsewhere (server/vhost config), avoiding
+   # duplicate or conflicting headers such as X-Frame-Options DENY + sameorigin.
    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
    Header always set X-Content-Type-Options "nosniff"
    Header always set Referrer-Policy "same-origin"

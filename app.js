@@ -97,6 +97,16 @@
   const MAX_EVENTS = 200;
   const MAX_TITLE = 200;
 
+  // r=1 (yearly) stores MM-DD, r=0 (fixed) stores YYYY-MM-DD.
+  function validDate(r, d) {
+    if (typeof d !== 'string') return false;
+    const m = (r === 1 ? /^(\d\d)-(\d\d)$/ : /^(\d{4})-(\d\d)-(\d\d)$/).exec(d);
+    if (!m) return false;
+    const [y, mo, day] = r === 1 ? [2000, +m[1], +m[2]] : [+m[1], +m[2], +m[3]]; // 2000 = leap year, allows 02-29
+    const dt = new Date(y, mo - 1, day);
+    return dt.getMonth() === mo - 1 && dt.getDate() === day;
+  }
+
   function decodeData() {
     // Prefer query string (?d=...); fall back to legacy hash (#d=...) for migration.
     let payload = new URLSearchParams(location.search).get('d');
@@ -110,7 +120,7 @@
       return arr.filter(e =>
         e && typeof e.t === 'string' && e.t.length > 0 && e.t.length <= MAX_TITLE
         && (e.r === 0 || e.r === 1)
-        && typeof e.d === 'string' && e.d.length <= 10
+        && validDate(e.r, e.d)
         && Number.isInteger(e.c) && e.c >= 0 && e.c < 16
       ).slice(0, MAX_EVENTS);
     } catch {
